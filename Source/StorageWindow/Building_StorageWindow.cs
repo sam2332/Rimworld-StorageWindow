@@ -10,9 +10,9 @@ using Verse.AI;
 using Verse.AI.Group;
 using Verse.Sound;
 
-namespace PassThroughWindow
+namespace StorageWindow
 {
-    public class Building_PassThroughWindow : Building_Storage
+    public class Building_StorageWindow : Building_Storage
     {
         private int ticksUntilAutoForward = 60; // Check every 60 ticks (1 second)
         private const int ITEMS_HELD_THRESHOLD = 5; // After 5 seconds, start auto-forwarding

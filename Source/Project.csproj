@@ -4,7 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>../Assemblies/</OutputPath>
-    <AssemblyName>PassThroughWindow</AssemblyName>
+    <AssemblyName>StorageWindow</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>

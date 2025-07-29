@@ -9,10 +9,10 @@
 
 
 	<ThingDef ParentName="StorageShelfBase">
-		<defName>PassThroughWindow</defName>
-		<label>pass-through window</label>
-		<description>A two-sided pass-through window for transferring items between rooms without entering or disrupting the other room's climate—perfect for moving raw food directly to the kitchen or cold storage. Act fast, though, perishable items left on the windowsill will deteriorate.</description>
-		<thingClass>PassThroughWindow.Building_PassThroughWindow</thingClass>
+		<defName>StorageWindow</defName>
+		<label>storage window</label>
+		<description>A two-sided storage window for transferring items between rooms without entering or disrupting the other room's climate—perfect for moving raw food directly to the kitchen or cold storage. Act fast, though, perishable items left on the windowsill will deteriorate.</description>
+		<thingClass>StorageWindow.Building_StorageWindow</thingClass>
 		<graphicData>
 			<texPath>Things/Building/Furniture/StorageWindow</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
