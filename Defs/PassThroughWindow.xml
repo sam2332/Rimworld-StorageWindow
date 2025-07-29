@@ -14,7 +14,7 @@
 		<description>A two-sided pass-through window for transferring items between rooms without entering or disrupting the other room's climate—perfect for moving raw food directly to the kitchen or cold storage. Act fast, though, perishable items left on the windowsill will deteriorate.</description>
 		<thingClass>PassThroughWindow.Building_PassThroughWindow</thingClass>
 		<graphicData>
-			<texPath>Things/Building/Furniture/PassThroughWindow</texPath>
+			<texPath>Things/Building/Furniture/StorageWindow</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(1,1)</drawSize>
 		</graphicData>
@@ -52,6 +52,21 @@
 					</categories>
 				</filter>
 			</fixedStorageSettings>
+			<defaultStorageSettings>
+				<priority>Low</priority>
+				<filter>
+					<categories>
+						<li>Foods</li>
+						<li>Manufactured</li>
+						<li>ResourcesRaw</li>
+						<li>Items</li>
+						<li>Weapons</li>
+						<li>Apparel</li>
+						<li>BodyParts</li>
+						<li>Corpses</li>
+					</categories>
+				</filter>
+			</defaultStorageSettings>
 			<storageGroupTag>PassThroughWindow</storageGroupTag>
 			<canPlaceOverWall>true</canPlaceOverWall>
 		</building>

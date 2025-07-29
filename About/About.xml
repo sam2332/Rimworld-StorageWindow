@@ -1,14 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ModMetaData>
-	<name>Pass It Through The Window!</name>
-	<author>SilkCircuit</author>
-	<description>A two-sided pass-through window for transferring items between rooms without entering or disrupting the other room's climate—perfect for moving raw food directly to the kitchen or cold storage.</description>
-	<packageId>silkcircuit.passitthroughthewindow</packageId>
+	<name>Storage Window</name>
+	<author>ProgrammerLily</author>
+	<description>A smart pass-through window system for seamless item transfer between rooms! 
+
+These windows automatically route items to their final storage destinations while maintaining perfect climate separation. Place them in walls to create efficient supply chains - colonists will use them as stepping stones, and items will automatically flow to better storage when available.
+
+How it works: The system continuously scans for better storage options using RimWorld's priority system (Critical > Important > Normal > Preferred > Low). When a higher-priority storage zone, stockpile, or container becomes available and accessible, colonists will automatically move items from the pass-through window to the better destination. Distance, item filters, and colonist availability are all considered to find the optimal final storage location.
+
+Features:
+• Intelligent auto-routing - items don't get stuck in windows
+• Climate barrier - maintains temperature/atmosphere separation  
+• Smart priority system - prefers final storage over transit
+• Auto-rotation - aligns perfectly with wall placement
+• Storage group integration - works with RimWorld 1.6 systems
+
+Perfect for kitchen supply lines, workshop material flow, or any situation where you need items to pass through walls efficiently!</description>
+	<packageId>storagewindow.programmerlily.com</packageId>
 	<supportedVersions>
 		<li>1.6</li>
 		<!-- Replace with 1.5 or other version numbers as needed -->
 	</supportedVersions>
 	<modVersion>1.0</modVersion>
-	<url>https://steamcommunity.com/id/SilkCircuit/</url>
+	<url></url>
 
 </ModMetaData>
