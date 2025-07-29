@@ -2,6 +2,23 @@
 
 ## Version History
 
+### Critical Bug Fix - Infinite Hauling Loop
+
+**Date**: Current Session  
+**Critical Issue Fixed**: 
+- **Problem**: Pawns would pick up items from storage windows and immediately put them back in the same window, creating an infinite loop
+- **Root Cause**: `StoreUtility.TryFindBestBetterStorageFor` was returning the same storage window as a valid destination
+- **Solution**: Added explicit check to prevent hauling to the same storage window that currently holds the item
+
+**Code Changes**:
+```csharp
+// CRITICAL FIX: Make sure we're not trying to haul to ourselves!
+if (haulDestination == this || foundCell == this.Position)
+{
+    continue; // Skip this item, it would just create a loop
+}
+```
+
 ### Mod Renaming & RimWorld 1.6 Update
 
 **Date**: Current Session  

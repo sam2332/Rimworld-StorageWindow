@@ -59,6 +59,12 @@ namespace StorageWindow
                 StoragePriority currentPriority = this.settings.Priority;
                 if (StoreUtility.TryFindBestBetterStorageFor(item, null, Map, currentPriority, Faction.OfPlayer, out IntVec3 foundCell, out IHaulDestination haulDestination))
                 {
+                    // CRITICAL FIX: Make sure we're not trying to haul to ourselves!
+                    if (haulDestination == this || foundCell == this.Position)
+                    {
+                        continue; // Skip this item, it would just create a loop
+                    }
+                    
                     // Found better storage - create a haul job for any available colonist
                     TryCreateAutoForwardJob(item, foundCell, haulDestination);
                     break; // Only process one item per tick to avoid performance issues
