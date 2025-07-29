@@ -1,19 +1,26 @@
-# PassThroughWindow Mod - Implementation Summary
+# StorageWindow Mod - Implementation Summary
 
 ## Version History
 
-### RimWorld 1.6 Update & Routing Optimization
+### Mod Renaming & RimWorld 1.6 Update
 
 **Date**: Current Session  
 **Updates Made**:
 
-1. **Version Compatibility Update**
-   - Updated `About.xml` supportedVersions from 1.5 to 1.6
-   - Updated `Project.csproj` assembly name from "ModTemplate" to "PassThroughWindow"
-   - Added 1.6 storage group support in `PassThroughWindow.xml`
+1. **Mod Renaming from PassThroughWindow to StorageWindow**
+   - Updated all namespace references from `PassThroughWindow` to `StorageWindow`
+   - Renamed class from `Building_PassThroughWindow` to `Building_StorageWindow`
+   - Updated defName in XML from `PassThroughWindow` to `StorageWindow`
+   - Renamed all project files and assemblies to use StorageWindow naming
+   - Updated AssemblyInfo and project configuration files
 
-2. **Major Routing Optimization Implementation**
-   - **Problem Identified**: Pass-through windows were acting as final storage destinations rather than intermediate transit points
+2. **Version Compatibility Update**
+   - Updated `About.xml` supportedVersions from 1.5 to 1.6
+   - Updated `Project.csproj` assembly name from "ModTemplate" to "StorageWindow"
+   - Added 1.6 storage group support in `StorageWindow.xml`
+
+3. **Major Routing Optimization Implementation**
+   - **Problem Identified**: Storage windows were acting as final storage destinations rather than intermediate transit points
    - **Solution Implemented**: Smart auto-forwarding system based on RimWorld's hauling AI
 
 ### Key Features Added
@@ -27,15 +34,15 @@
 
 #### Technical Implementation Details
 
-**Building_PassThroughWindow.cs Enhancements**:
+**Building_StorageWindow.cs Enhancements**:
 - `Tick()` override: Runs auto-forward check every 60 ticks (1 second)
 - `TryAutoForwardItems()`: Scans held items and finds better storage destinations
 - `TryCreateAutoForwardJob()`: Creates hauling jobs for available colonists
 - `FindAvailableHauler()`: Intelligently selects the best colonist for the job
-- `GetInspectString()`: Provides user feedback about pass-through behavior
+- `GetInspectString()`: Provides user feedback about storage window behavior
 
 **XML Configuration Updates**:
-- Added `defaultStorageSettings` with Low priority in `PassThroughWindow.xml`
+- Added `defaultStorageSettings` with Low priority in `StorageWindow.xml`
 - Maintains backward compatibility with existing installations
 
 ### How It Works

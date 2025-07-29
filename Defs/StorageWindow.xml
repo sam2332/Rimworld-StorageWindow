@@ -67,7 +67,7 @@
 					</categories>
 				</filter>
 			</defaultStorageSettings>
-			<storageGroupTag>PassThroughWindow</storageGroupTag>
+			<storageGroupTag>StorageWindow</storageGroupTag>
 			<canPlaceOverWall>true</canPlaceOverWall>
 		</building>
 		<blockLight>true</blockLight>
