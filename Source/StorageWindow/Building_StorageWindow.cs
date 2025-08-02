@@ -14,8 +14,10 @@ namespace StorageWindow
 {
     public class Building_StorageWindow : Building_Storage
     {
-        private int ticksUntilAutoForward = 60; // Check every 60 ticks (1 second)
+        private int ticksUntilAutoForward = 300; // Check every 300 ticks (5 seconds) - much slower
+        private int ticksSinceLastJobCreated = 0; // Track time since last job to avoid spam
         private const int ITEMS_HELD_THRESHOLD = 5; // After 5 seconds, start auto-forwarding
+        private const int MIN_TICKS_BETWEEN_JOBS = 300; // Minimum 5 seconds between creating jobs
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
@@ -33,11 +35,22 @@ namespace StorageWindow
         {
             base.Tick();
             
-            // Auto-forward items to better storage periodically
+            // Track time since last job
+            if (ticksSinceLastJobCreated < MIN_TICKS_BETWEEN_JOBS)
+            {
+                ticksSinceLastJobCreated++;
+            }
+            
+            // Auto-forward items to better storage periodically, but not too often
             if (--ticksUntilAutoForward <= 0)
             {
-                ticksUntilAutoForward = 60; // Reset timer
-                TryAutoForwardItems();
+                ticksUntilAutoForward = 300; // Reset timer (5 seconds)
+                
+                // Only try if enough time has passed since last job creation
+                if (ticksSinceLastJobCreated >= MIN_TICKS_BETWEEN_JOBS)
+                {
+                    TryAutoForwardItems();
+                }
             }
         }
 
@@ -51,8 +64,12 @@ namespace StorageWindow
             
             foreach (Thing item in itemsToForward)
             {
-                // Skip if item is reserved or being hauled
-                if (Map.reservationManager.IsReservedByAnyoneOf(item, Faction.OfPlayer))
+                // Skip if item is reserved by anyone (more comprehensive check)
+                if (Map.reservationManager.FirstRespectedReserver(item, null) != null)
+                    continue;
+                
+                // Skip if item is forbidden for player faction
+                if (item.IsForbidden(Map.mapPawns.FreeColonists.FirstOrDefault()))
                     continue;
 
                 // Try to find better storage for this item
@@ -66,18 +83,29 @@ namespace StorageWindow
                     }
                     
                     // Found better storage - create a haul job for any available colonist
-                    TryCreateAutoForwardJob(item, foundCell, haulDestination);
-                    break; // Only process one item per tick to avoid performance issues
+                    if (TryCreateAutoForwardJob(item, foundCell, haulDestination))
+                    {
+                        // Successfully created a job, reset the timer and break to avoid creating multiple jobs
+                        ticksSinceLastJobCreated = 0;
+                        break; // Only process one item per attempt to avoid performance issues
+                    }
                 }
             }
         }
 
-        private void TryCreateAutoForwardJob(Thing item, IntVec3 foundCell, IHaulDestination haulDestination)
+        private bool TryCreateAutoForwardJob(Thing item, IntVec3 foundCell, IHaulDestination haulDestination)
         {
             // Find an available colonist to do the hauling
             Pawn hauler = FindAvailableHauler(item);
             if (hauler == null) 
-                return;
+                return false;
+
+            // Double-check that the hauler can still reach and reserve the item
+            if (!hauler.CanReach(item, PathEndMode.ClosestTouch, Danger.Deadly) ||
+                !hauler.CanReserve(item, 1, -1, null, false))
+            {
+                return false;
+            }
 
             Job haulJob;
             if (haulDestination is ISlotGroupParent)
@@ -94,15 +122,21 @@ namespace StorageWindow
                 }
                 else
                 {
-                    return; // Can't handle this destination type
+                    return false; // Can't handle this destination type
                 }
             }
 
             if (haulJob != null)
             {
                 haulJob.playerForced = false; // This is automatic, not player-forced
-                hauler.jobs.TryTakeOrderedJob(haulJob, JobTag.MiscWork);
+                haulJob.haulOpportunisticDuplicates = false; // Don't try to optimize with other items
+                
+                // Use a more appropriate job tag for automatic hauling
+                bool jobAccepted = hauler.jobs.TryTakeOrderedJob(haulJob, JobTag.MiscWork);
+                return jobAccepted;
             }
+            
+            return false;
         }
 
         private Pawn FindAvailableHauler(Thing item)
@@ -112,8 +146,10 @@ namespace StorageWindow
                 .Where(p => !p.Downed && 
                            !p.Dead && 
                            p.workSettings?.WorkIsActive(WorkTypeDefOf.Hauling) == true &&
-                           p.CanReach(item, PathEndMode.Touch, Danger.None) &&
-                           HaulAIUtility.PawnCanAutomaticallyHaulFast(p, item, false))
+                           !p.jobs.curJob?.def?.alwaysShowWeapon == true && // Skip pawns with combat jobs
+                           p.CanReach(item, PathEndMode.ClosestTouch, Danger.Deadly) && // Use Deadly to match game's hauling logic
+                           HaulAIUtility.PawnCanAutomaticallyHaulFast(p, item, false) &&
+                           p.Position.DistanceToSquared(item.Position) <= 900) // Max distance of 30 tiles (30^2 = 900)
                 .OrderBy(p => p.Position.DistanceToSquared(item.Position))
                 .FirstOrDefault();
         }
@@ -131,7 +167,20 @@ namespace StorageWindow
             
             if (slotGroup?.HeldThings?.Any() == true)
             {
+                int nextCheckIn = (300 - (300 - ticksUntilAutoForward)) / 60; // Convert to seconds
+                int timeSinceLastJob = ticksSinceLastJobCreated / 60; // Convert to seconds
+                
                 sb.AppendLine($"Items will be moved to higher priority storage when colonists are available");
+                
+                if (ticksSinceLastJobCreated < MIN_TICKS_BETWEEN_JOBS)
+                {
+                    int cooldownRemaining = (MIN_TICKS_BETWEEN_JOBS - ticksSinceLastJobCreated) / 60;
+                    sb.AppendLine($"Next auto-forward attempt in {Math.Max(1, cooldownRemaining)} seconds");
+                }
+                else
+                {
+                    sb.AppendLine($"Next auto-forward check in {Math.Max(1, nextCheckIn)} seconds");
+                }
             }
             
             return sb.ToString().TrimEnd();

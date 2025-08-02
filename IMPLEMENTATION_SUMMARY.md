@@ -2,9 +2,39 @@
 
 ## Version History
 
-### Critical Bug Fix - Infinite Hauling Loop
+### Performance & Behavior Fix - Auto-Forward Timing Issues
 
 **Date**: Current Session  
+**Critical Issues Fixed**: 
+- **Problem**: Pawns were repeatedly picking up and dropping items due to too-frequent auto-forwarding attempts
+- **Root Cause**: Auto-forward system was running every 1 second (60 ticks) with no cooldown between job creations
+- **Solution**: Implemented proper timing controls and job spacing to prevent spam behavior
+
+**Key Changes**:
+```csharp
+// Increased interval from 60 to 300 ticks (1 second → 5 seconds)
+private int ticksUntilAutoForward = 300;
+
+// Added cooldown tracking to prevent job spam
+private int ticksSinceLastJobCreated = 0;
+private const int MIN_TICKS_BETWEEN_JOBS = 300; // Minimum 5 seconds between creating jobs
+
+// Only create jobs if enough time has passed since last attempt
+if (ticksSinceLastJobCreated >= MIN_TICKS_BETWEEN_JOBS)
+{
+    TryAutoForwardItems();
+}
+```
+
+**Additional Improvements**:
+- Better reservation checking using `FirstRespectedReserver` instead of `IsReservedByAnyoneOf`
+- More comprehensive hauler validation with distance limits (30 tiles max)
+- Proper job return value handling to track successful job creation
+- Enhanced user feedback showing next auto-forward timing
+
+### Critical Bug Fix - Infinite Hauling Loop
+
+**Date**: Previous Session  
 **Critical Issue Fixed**: 
 - **Problem**: Pawns would pick up items from storage windows and immediately put them back in the same window, creating an infinite loop
 - **Root Cause**: `StoreUtility.TryFindBestBetterStorageFor` was returning the same storage window as a valid destination
