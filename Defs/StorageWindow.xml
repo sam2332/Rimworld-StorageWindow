@@ -77,9 +77,6 @@
 		<castEdgeShadows>true</castEdgeShadows>
 		<canOverlapZones>false</canOverlapZones>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
-		<inspectorTabs>
-			<li>ITab_Storage</li>
-		</inspectorTabs>
 		<comps>
 			<li Class="CompProperties_Breakdownable"/>
 		</comps>
