@@ -69,6 +69,8 @@
 			</defaultStorageSettings>
 			<storageGroupTag>StorageWindow</storageGroupTag>
 			<canPlaceOverWall>true</canPlaceOverWall>
+			
+      		<isAirtight>true</isAirtight>
 		</building>
 		<blockLight>true</blockLight>
 		<blockWeather>true</blockWeather>
